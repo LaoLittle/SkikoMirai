@@ -13,7 +13,7 @@ Based on [Jetbrains/skiko](https://github.com/JetBrains/skiko)
 Surface.getBytes()
 Surface.toExternalResource()
 
-获取字体请使用Fonts.get() "Fonts[]"
+获取字体请使用Fonts.get() //Fonts[]
 会读取插件数据目录里的字体文件
 
 ```
