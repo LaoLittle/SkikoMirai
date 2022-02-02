@@ -19,6 +19,6 @@ object SkikoMirai : KotlinPlugin(
 
     init {
         if (!Fonts.fontFolder.isDirectory)
-            Fonts.fontFolder.mkdir()
+            Fonts.fontFolder.mkdirs()
     }
 }

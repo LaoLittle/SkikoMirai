@@ -7,9 +7,9 @@ import org.jetbrains.skia.makeFromFile
 object Fonts {
     val fontFolder = SkikoMirai.dataFolder.resolve("Fonts")
 
-    operator fun get(name: String, size: Float = 100F): Font {
-        val file = fontFolder.resolve(name)
-        require(file.isFile) { "无法找到字体: $name" }
+    operator fun get(fileName: String, size: Float = 100F): Font {
+        val file = fontFolder.resolve(fileName)
+        require(file.isFile) { "无法找到字体: $fileName" }
 
         file.readBytes()
         return Font(Typeface.makeFromFile(file.path), size)

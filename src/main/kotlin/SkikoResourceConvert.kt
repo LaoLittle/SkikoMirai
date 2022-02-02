@@ -12,4 +12,3 @@ fun Surface.getBytes(format: EncodedImageFormat = EncodedImageFormat.PNG): ByteA
 
 fun Surface.toExternalResource(format: EncodedImageFormat = EncodedImageFormat.PNG) =
     getBytes(format).toExternalResource(format.name.lowercase())
-
