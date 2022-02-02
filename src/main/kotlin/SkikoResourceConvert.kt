@@ -1,3 +1,5 @@
+@file: Suppress("unused")
+
 package org.laolittle.plugin
 
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
