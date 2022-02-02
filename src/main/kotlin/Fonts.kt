@@ -5,7 +5,9 @@ import org.jetbrains.skia.Typeface
 import org.jetbrains.skia.makeFromFile
 
 object Fonts {
-    val fontFolder = SkikoMirai.dataFolder.resolve("Fonts")
+    val fontFolder by lazy {
+        SkikoMirai.dataFolder.resolve("Fonts").also { it.mkdirs() }
+    }
 
     operator fun get(fileName: String, size: Float = 100F): Font {
         val file = fontFolder.resolve(fileName)
