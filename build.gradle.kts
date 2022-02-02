@@ -18,9 +18,9 @@ repositories {
 fun skikoAwt(ver: String) = "org.jetbrains.skiko:skiko-awt-runtime-$ver"
 
 dependencies {
-    val skikoVer = "0.7.4"
+    val skikoVer = "0.7.5"
+
     implementation(skikoAwt("windows-x64:$skikoVer"))
     implementation(skikoAwt("linux-x64:$skikoVer"))
     implementation(skikoAwt("linux-arm64:$skikoVer"))
 }
-
