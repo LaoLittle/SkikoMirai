@@ -12,8 +12,6 @@ object Fonts {
     operator fun get(fileName: String, size: Float = 100F): Font {
         val file = fontFolder.resolve(fileName)
         require(file.isFile) { "无法找到字体: $fileName" }
-
-        file.readBytes()
         return Font(Typeface.makeFromFile(file.path), size)
     }
 }
