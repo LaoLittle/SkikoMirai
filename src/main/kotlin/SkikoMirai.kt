@@ -8,7 +8,7 @@ object SkikoMirai : KotlinPlugin(
     JvmPluginDescription(
         id = "org.laolittle.plugin.SkikoMirai",
         name = "SkikoMirai",
-        version = "1.0",
+        version = "1.0.1",
     ) {
         author("LaoLittle")
     }
