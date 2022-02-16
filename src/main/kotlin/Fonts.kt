@@ -16,6 +16,6 @@ object Fonts {
         return Font(Typeface.makeFromFile(file.path), size)
     }
 
-    operator fun get(fontName: String, size: Float = 100F, fontStyle: FontStyle) =
+    operator fun get(fontName: String, fontStyle: FontStyle, size: Float = 100F) =
         Font(Typeface.makeFromName(fontName, fontStyle), size)
 }
