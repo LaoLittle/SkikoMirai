@@ -8,12 +8,13 @@ object SkikoMirai : KotlinPlugin(
     JvmPluginDescription(
         id = "org.laolittle.plugin.SkikoMirai",
         name = "SkikoMirai",
-        version = "1.0.1",
+        version = "1.0.2",
     ) {
         author("LaoLittle")
     }
 ) {
     override fun onEnable() {
+        FontConfig.reload()
         logger.info { "Plugin loaded" }
     }
 }
