@@ -17,3 +17,18 @@ Surface.toExternalResource()
 会读取插件数据目录里的字体文件
 
 ```
+
+## 字体命名规则: 
+字体名-字体风格
+
+例如:
+- MiSans-Bold
+- Noto Sans SC-BOLD
+
+字体风格支持: 
+- NORMAL
+- BOLD
+- ITALIC
+- BOLD_ITALIC
+
+当无法在字体文件夹下找到字体文件，会自动尝试获取系统字体
