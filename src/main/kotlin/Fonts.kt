@@ -8,9 +8,7 @@ import org.jetbrains.skia.makeFromFile
 object Fonts {
     private val fonts by FontConfig::fonts
 
-    val fontFolder by lazy {
-        SkikoMirai.dataFolder.resolve("Fonts").also { it.mkdirs() }
-    }
+    val fontFolder = SkikoMirai.dataFolder.resolve("Fonts").also { it.mkdirs() }
 
     operator fun get(fontName: String, size: Float = 100F): Font {
         val fileName = fonts.getOrPut(fontName) {
