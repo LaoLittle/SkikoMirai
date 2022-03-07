@@ -27,12 +27,23 @@ publishing {
     }
 }
 
-fun skikoAwt(ver: String) = "org.jetbrains.skiko:skiko-awt-runtime-$ver"
+val osName = System.getProperty("os.name")
+val targetOs = when {
+    osName == "Mac OS X" -> "macos"
+    osName.startsWith("Win") -> "windows"
+    osName.startsWith("Linux") -> "linux"
+    else -> error("Unsupported OS: $osName")
+}
 
+val osArch = System.getProperty("os.arch")
+var targetArch = when (osArch) {
+    "x86_64", "amd64" -> "x64"
+    "aarch64" -> "arm64"
+    else -> error("Unsupported arch: $osArch")
+}
+
+val skikoVersion = "0.7.14"
+val target = "${targetOs}-${targetArch}"
 dependencies {
-    val skikoVer = "0.7.12"
-
-    implementation(skikoAwt("windows-x64:$skikoVer"))
-    implementation(skikoAwt("linux-x64:$skikoVer"))
-    implementation(skikoAwt("linux-arm64:$skikoVer"))
+    implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$skikoVersion")
 }
