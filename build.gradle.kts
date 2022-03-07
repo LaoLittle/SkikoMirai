@@ -21,7 +21,6 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "org.laolittle.plugin"
             artifactId = "SkikoMirai"
-            version = "1.0.2"
 
             from(components["java"])
         }
