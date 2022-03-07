@@ -4,7 +4,7 @@ plugins {
     kotlin("plugin.serialization") version kotlinVersion
 
     id("net.mamoe.mirai-console") version "2.10.0"
-    `maven-publish`
+    //`maven-publish`
 }
 
 group = "org.laolittle.plugin"
