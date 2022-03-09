@@ -60,7 +60,7 @@ jobs:
            name: skikomirai-macos
            path: ./build/mirai
            retention-days: 5
-       -  uses: "jasondavis303/tag-and-release-and-upload@v1.2.0"
+       -  uses: "nougatchi/tag-and-release-and-upload@v1.2.0"
           with:
            github-token: ${{ secrets.GITHUB_TOKEN }}
 
