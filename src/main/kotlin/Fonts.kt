@@ -33,4 +33,10 @@ object Fonts {
             Font(Typeface.makeFromFile(file.path), size)
         }
     }
+
+    fun findByName(fontName: String, size: Float): Font? {
+        val fileName = fontFolder.listFiles()?.find { fontName.uppercase() in it.name.uppercase() }?.name
+
+        return fileName?.let { Font(Typeface.makeFromFile(fontFolder.resolve(fileName).path), size) }
+    }
 }
