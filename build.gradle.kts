@@ -43,7 +43,7 @@ var targetArch = when (val osArch: String = System.getProperty("os.arch")) {
 
 val skikoVersion = "0.7.14"
 val target = "${targetOs}-${targetArch}"
-version = "$ver$target"
+version = "$ver-$target"
 dependencies {
     implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$skikoVersion")
 }
