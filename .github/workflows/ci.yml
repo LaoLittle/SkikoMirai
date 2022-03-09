@@ -60,6 +60,15 @@ jobs:
            name: skikomirai-macos
            path: ./build/mirai
            retention-days: 5
+       - uses: "marvinpinto/action-automatic-releases@latest"
+         with:
+           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+           automatic_release_tag: ${{steps.branch_name.outputs.SOURCE_TAG}}
+           prerelease: false
+           title: ${{steps.branch_name.outputs.SOURCE_TAG}}
+           files: |
+             build/mirai/*.jar
+
    linux:
      runs-on: ubuntu-latest
      steps:
@@ -77,6 +86,14 @@ jobs:
            name: skikomirai-linux
            path: ./build/mirai
            retention-days: 5
+       - uses: "marvinpinto/action-automatic-releases@latest"
+         with:
+           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+           automatic_release_tag: ${{steps.branch_name.outputs.SOURCE_TAG}}
+           prerelease: false
+           title: ${{steps.branch_name.outputs.SOURCE_TAG}}
+           files: |
+             build/mirai/*.jar
    linuxArm64:
      runs-on: ubuntu-latest
      steps:
@@ -95,3 +112,11 @@ jobs:
            name: skikomirai-linuxArm64
            path: ./build/mirai
            retention-days: 5
+       - uses: "marvinpinto/action-automatic-releases@latest"
+         with:
+           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+           automatic_release_tag: ${{steps.branch_name.outputs.SOURCE_TAG}}
+           prerelease: false
+           title: ${{steps.branch_name.outputs.SOURCE_TAG}}
+           files: |
+             build/mirai/*.jar

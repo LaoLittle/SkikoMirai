@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "org.laolittle.plugin"
-version = "1.0.3"
+val ver = "1.0.3"
 
 repositories {
     mavenCentral()
@@ -43,6 +43,7 @@ var targetArch = when (val osArch: String = System.getProperty("os.arch")) {
 
 val skikoVersion = "0.7.14"
 val target = "${targetOs}-${targetArch}"
+version = "$ver$target"
 dependencies {
     implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$skikoVersion")
 }
