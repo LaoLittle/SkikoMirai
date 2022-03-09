@@ -28,7 +28,7 @@ jobs:
           ./gradlew buildPlugin
       - uses: actions/upload-artifact@v2
         with:
-          name: test-reports-windows
+          name: skikomirai
           path: ./build/mirai
           retention-days: 5
 
