@@ -54,19 +54,19 @@ jobs:
          run: |
            chmod +x gradlew
            ./gradlew buildPlugin
+           mv ./build/mirai/*.jar ./
        - uses: actions/upload-artifact@v2
          with:
            name: skikomirai-macos
            path: ./build/mirai
            retention-days: 5
-       - uses: "marvinpinto/action-automatic-releases@latest"
-         with:
-           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-           automatic_release_tag: ${{steps.branch_name.outputs.SOURCE_TAG}}
-           prerelease: false
-           title: ${{steps.branch_name.outputs.SOURCE_TAG}}
-           files: |
-             build/mirai/*.jar
+       -  uses: jasondavis303/tag-and-release-and-upload@v1.2.0
+          with:
+           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+           version: ${{steps.branch_name.outputs.SOURCE_TAG}}
+           assets: '[ "*.jar" ]'
+           overwrite: false
 
    linux:
      runs-on: ubuntu-latest
@@ -101,7 +101,7 @@ jobs:
          with:
            distribution: 'adopt'
            java-version: '17'
-           architecture: arm64
+           architecture: aarch64
        - shell: bash
          run: |
            chmod +x gradlew
