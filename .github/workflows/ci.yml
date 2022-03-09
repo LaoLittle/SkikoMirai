@@ -28,12 +28,42 @@ jobs:
           ./gradlew buildPlugin
       - uses: actions/upload-artifact@v2
         with:
-          name: skikomirai
+          name: skikomirai-windows
           path: ./build/mirai
           retention-days: 5
-      - name: Release
-        uses: JamesIves/github-pages-deploy-action@releases/v3
-        with:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BRANCH: releases
-          FOLDER: ./build/mirai
+   macos:
+     runs-on: macos-11
+     steps:
+       - uses: actions/checkout@v2
+       - uses: microsoft/setup-msbuild@v1
+       - uses: ilammy/msvc-dev-cmd@v1
+         with:
+           distribution: 'adopt'
+           java-version: '17'
+       - shell: bash
+         run: |
+           chmod +x gradlew
+           ./gradlew buildPlugin
+       - uses: actions/upload-artifact@v2
+         with:
+           name: skikomirai-macos
+           path: ./build/mirai
+           retention-days: 5
+   linux:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v2
+       - uses: microsoft/setup-msbuild@v1
+       - uses: ilammy/msvc-dev-cmd@v1
+         with:
+           distribution: 'adopt'
+           java-version: '17'
+       - shell: bash
+         run: |
+           chmod +x gradlew
+           ./gradlew buildPlugin
+       - uses: actions/upload-artifact@v2
+         with:
+           name: skikomirai-macos
+           path: ./build/mirai
+           retention-days: 5
