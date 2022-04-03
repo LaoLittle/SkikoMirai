@@ -14,9 +14,6 @@ Based on [Jetbrains/skiko](https://github.com/JetBrains/skiko)
 内置的工具
 Surface.getBytes()
 Surface.toExternalResource()
-
-
-
 ```
 
 获取字体请使用`Fonts.get() //Fonts[]`
