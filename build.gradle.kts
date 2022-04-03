@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+
 plugins {
     val kotlinVersion = "1.6.10"
     kotlin("jvm") version kotlinVersion
@@ -9,6 +11,10 @@ plugins {
 
 group = "org.laolittle.plugin"
 val ver = "1.0.3"
+
+kotlin {
+    explicitApi = ExplicitApiMode.Strict
+}
 
 repositories {
     mavenCentral()
@@ -41,9 +47,13 @@ var targetArch = when (val osArch: String = System.getProperty("os.arch")) {
     else -> error("Unsupported arch: $osArch")
 }
 
-val skikoVersion = "0.7.14"
+val skikoVersion = "0.7.16"
 val target = "${targetOs}-${targetArch}"
-version = "$ver-$target"
+//version = "$ver-$target"
+version = ver
 dependencies {
-    implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$skikoVersion")
+    //implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$skikoVersion")
+    implementation("org.jetbrains.skiko:skiko-awt-runtime-linux-x64:$skikoVersion")
+    implementation("org.jetbrains.skiko:skiko-awt-runtime-windows-x64:$skikoVersion")
+    implementation("org.jetbrains.skiko:skiko-awt-runtime-linux-arm64:$skikoVersion")
 }

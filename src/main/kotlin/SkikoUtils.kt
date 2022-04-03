@@ -5,12 +5,15 @@ package org.laolittle.plugin
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.message.MessageReceipt
 import net.mamoe.mirai.message.data.sendTo
+import net.mamoe.mirai.utils.ExternalResource
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skia.EncodedImageFormat
 import org.jetbrains.skia.Image
 import org.jetbrains.skia.Surface
 import org.jetbrains.skiko.toBufferedImage
+import java.awt.image.BufferedImage
+import net.mamoe.mirai.message.data.Image as MiraiImage
 
 @Deprecated(
     """
@@ -19,7 +22,7 @@ import org.jetbrains.skiko.toBufferedImage
         "Image.getBytes(format: EncodedImageFormat = EncodedImageFormat.PNG)"
     )
 )
-fun Surface.getBytes(format: EncodedImageFormat = EncodedImageFormat.PNG): ByteArray {
+public fun Surface.getBytes(format: EncodedImageFormat = EncodedImageFormat.PNG): ByteArray {
     makeImageSnapshot().encodeToData(format).use {
         requireNotNull(it) { "Error: Draw Failed" }
         return it.bytes
@@ -35,24 +38,24 @@ fun Surface.getBytes(format: EncodedImageFormat = EncodedImageFormat.PNG): ByteA
     )
 )
 
-fun Surface.toExternalResource(format: EncodedImageFormat = EncodedImageFormat.PNG) =
+public fun Surface.toExternalResource(format: EncodedImageFormat = EncodedImageFormat.PNG): ExternalResource =
     makeImageSnapshot().toExternalResource(format)
 
-fun Image.getBytes(format: EncodedImageFormat = EncodedImageFormat.PNG, quality: Int = 100): ByteArray {
+public fun Image.getBytes(format: EncodedImageFormat = EncodedImageFormat.PNG, quality: Int = 100): ByteArray {
     return encodeToData(format, quality)?.use {
         it.bytes
     } ?: throw IllegalStateException("Image encode failed")
 }
 
-val Image.bytes get() = getBytes()
+public val Image.bytes: ByteArray get() = getBytes()
 
-fun Image.toExternalResource(format: EncodedImageFormat = EncodedImageFormat.PNG) =
+public fun Image.toExternalResource(format: EncodedImageFormat = EncodedImageFormat.PNG): ExternalResource =
     getBytes(format).toExternalResource(format.name.replace("JPEG", "JPG"))
 
-fun Image.toBufferedImage() = Bitmap.makeFromImage(this).toBufferedImage()
+public fun Image.toBufferedImage(): BufferedImage = Bitmap.makeFromImage(this).toBufferedImage()
 
-suspend inline fun Contact.uploadImage(image: Image) =
+public suspend inline fun Contact.uploadImage(image: Image): MiraiImage =
     image.toExternalResource().use { uploadImage(it) }
 
-suspend inline fun <C : Contact> C.sendImage(image: Image): MessageReceipt<C> =
+public suspend inline fun <C : Contact> C.sendImage(image: Image): MessageReceipt<C> =
     uploadImage(image).sendTo(this)
