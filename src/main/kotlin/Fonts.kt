@@ -9,12 +9,9 @@ import java.io.File
 internal val typeFaces = mutableMapOf<String, Typeface>()
 
 public object Fonts {
-    private val fonts by FontConfig::fonts
-
     public operator fun get(fontName: String, size: Float = 100F): Font {
-        val fileName = fonts.getOrPut(fontName) {
-            fontFolder.listFiles()?.find { fontName.uppercase() in it.name.uppercase() }?.name ?: ""
-        }
+        val fileName = fontFolder.listFiles()?.find { fontName.uppercase() in it.name.uppercase() }?.name ?: ""
+
         return try {
             if (fileName == "") {
                 val style = when (fontName.split("-").last().uppercase()) {
