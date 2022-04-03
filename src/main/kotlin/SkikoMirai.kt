@@ -14,11 +14,8 @@ public object SkikoMirai : KotlinPlugin(
     }
 ) {
     override fun onEnable() {
+        fontFolder.mkdirs()
         FontConfig.reload()
         logger.info { "Plugin loaded" }
-    }
-
-    init {
-        fontFolder.mkdirs()
     }
 }
