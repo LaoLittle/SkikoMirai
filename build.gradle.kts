@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "org.laolittle.plugin"
-val ver = "1.0.3"
+val ver = "1.0.4"
 
 kotlin {
     explicitApi = ExplicitApiMode.Strict
@@ -53,7 +53,7 @@ val target = "${targetOs}-${targetArch}"
 version = ver
 dependencies {
     //implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$skikoVersion")
-    implementation("org.jetbrains.skiko:skiko-awt-runtime-linux-x64:$skikoVersion")
-    implementation("org.jetbrains.skiko:skiko-awt-runtime-windows-x64:$skikoVersion")
-    implementation("org.jetbrains.skiko:skiko-awt-runtime-linux-arm64:$skikoVersion")
+    compileOnly("org.jetbrains.skiko:skiko-awt-runtime-linux-x64:$skikoVersion")
+    api("org.jetbrains.skiko:skiko-awt-runtime-windows-x64:$skikoVersion")
+    compileOnly("org.jetbrains.skiko:skiko-awt-runtime-linux-arm64:$skikoVersion")
 }
