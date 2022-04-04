@@ -3,6 +3,7 @@
 
 [![jitpack](https://jitpack.io/v/LaoLittle/SkikoMirai.svg)](https://jitpack.io/#LaoLittle/SkikoMirai)
 [![version](https://img.shields.io/badge/dynamic/json.svg?color=cyan&label=latest%20version&query=$.tag_name&url=https://github.com/LaoLittle/SkikoMirai/releases/latest)](https://github.com/LaoLittle/SkikoMirai/releases/latest)
+
 Based on [Jetbrains/skiko](https://github.com/JetBrains/skiko)
 
 支持的平台:
