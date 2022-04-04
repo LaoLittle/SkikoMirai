@@ -61,3 +61,25 @@ dependencies {
     implementation("com.github.LaoLittle:SkikoMirai:1.0.4")
 }
 ```
+
+配置插件依赖示例: 
+```kotlin
+object DrawMeme : KotlinPlugin(
+    JvmPluginDescription(
+        id = "org.laolittle.plugin.draw.DrawMeme",
+        name = "DrawMeme",
+        version = "1.0.4",
+    ) {
+        author("LaoLittle")
+
+        dependsOn(
+            PluginDependency(
+                id = "org.laolittle.plugin.SkikoMirai",
+                versionRequirement = ">=1.0.3",
+                // 前置插件可选
+                isOptional = true
+            ) 
+        )
+    }
+)
+```
