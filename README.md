@@ -75,7 +75,7 @@ object DrawMeme : KotlinPlugin(
         dependsOn(
             id = "org.laolittle.plugin.SkikoMirai",
             versionRequirement = ">=1.0.3",
-            // 前置插件可选
+            // 前置插件是否可选
             isOptional = true
         )
     }
