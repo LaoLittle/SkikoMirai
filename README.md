@@ -57,10 +57,6 @@ repositories {
 }
 
 dependencies {
-    val skikoVer = "0.7.16"
-    compileOnly(skikoAwt("windows-x64:$skikoVer"))
-    compileOnly(skikoAwt("linux-x64:$skikoVer"))
-    compileOnly(skikoAwt("linux-arm64:$skikoVer"))
     implementation("com.github.LaoLittle:SkikoMirai:1.0.4")
 }
 ```
