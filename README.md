@@ -24,13 +24,15 @@ Surface.toExternalResource()
 使用拓展中缀函数`Fonts.usedBy()`，
 可以标记一个功能所使用的字体，方便用户修改
 
-配置文件示例 (使用DrawMeme):
+示例: 
+```kotlin
+val phFont: Font = Fonts["MiSans-Bold", 100f] usedBy "PornHub生成器"
+```
+
+配置文件示例:
 ```yaml
-funts: 
-  黑白图片: 'MiSans-Bold'
-  5k兆顶部文字: 'Noto Sans SC-BOLD'
-  5k兆底部文字: 'Noto Serif SC-BOLD'
-  0%生成器: 'MiSans-Regular'
+funts:
+  PornHub生成器: 'MiSans-Bold'
 ```
 
 ## 字体命名规则: 
