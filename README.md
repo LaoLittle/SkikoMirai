@@ -73,12 +73,10 @@ object DrawMeme : KotlinPlugin(
         author("LaoLittle")
 
         dependsOn(
-            PluginDependency(
-                id = "org.laolittle.plugin.SkikoMirai",
-                versionRequirement = ">=1.0.3",
-                // 前置插件可选
-                isOptional = true
-            ) 
+            id = "org.laolittle.plugin.SkikoMirai",
+            versionRequirement = ">=1.0.3",
+            // 前置插件可选
+            isOptional = true
         )
     }
 )
