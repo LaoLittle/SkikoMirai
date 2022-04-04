@@ -5,12 +5,12 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.10.0"
+    id("net.mamoe.mirai-console") version "2.11.0-M2"
     `maven-publish`
 }
 
 group = "org.laolittle.plugin"
-val ver = "1.0.4"
+version = "1.0.4"
 
 kotlin {
     explicitApi = ExplicitApiMode.Strict
@@ -33,27 +33,7 @@ publishing {
     }
 }
 
-val osName: String = System.getProperty("os.name")
-val targetOs = when {
-    osName == "Mac OS X" -> "macos"
-    osName.startsWith("Win") -> "windows"
-    osName.startsWith("Linux") -> "linux"
-    else -> error("Unsupported OS: $osName")
-}
-
-var targetArch = when (val osArch: String = System.getProperty("os.arch")) {
-    "x86_64", "amd64" -> "x64"
-    "aarch64" -> "arm64"
-    else -> error("Unsupported arch: $osArch")
-}
-
-val skikoVersion = "0.7.16"
-val target = "${targetOs}-${targetArch}"
-//version = "$ver-$target"
-version = ver
 dependencies {
-    //implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$skikoVersion")
-    compileOnly("org.jetbrains.skiko:skiko-awt-runtime-linux-x64:$skikoVersion")
-    api("org.jetbrains.skiko:skiko-awt-runtime-windows-x64:$skikoVersion")
-    compileOnly("org.jetbrains.skiko:skiko-awt-runtime-linux-arm64:$skikoVersion")
+    // 为防止mirai获取多余的依赖
+    api("org.jetbrains.skiko:skiko-awt:0.7.16")
 }
