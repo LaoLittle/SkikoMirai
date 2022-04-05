@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "org.laolittle.plugin"
-version = "1.0.4"
+version = "1.0.5"
 
 kotlin {
     explicitApi = ExplicitApiMode.Strict
@@ -27,7 +27,6 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.github.laolittle.plugin"
             artifactId = "SkikoMirai"
-
             from(components["java"])
         }
     }
@@ -35,5 +34,10 @@ publishing {
 
 dependencies {
     // 为防止mirai获取多余的依赖
-    api("org.jetbrains.skiko:skiko-awt:0.7.16")
+    val skikoVersion = "0.7.17"
+    api("org.jetbrains.skiko:skiko-awt:$skikoVersion")
+
+    //implementation("org.jetbrains.skiko:skiko-awt-runtime-linux-x64:$skikoVersion")
+    //implementation("org.jetbrains.skiko:skiko-awt-runtime-windows-x64:$skikoVersion")
+    //implementation("org.jetbrains.skiko:skiko-awt-runtime-linux-arm64:$skikoVersion")
 }
