@@ -10,7 +10,7 @@ internal const val SKIKO_LIBRARY_PATH_PROPERTY = "skiko.library.path"
 
 internal val SkikoLibFolder = PluginManager.pluginsDataFolder.resolve(SkikoMirai.id).resolve("lib").apply { mkdirs() }
 
-internal val SkikoLibFile = SkikoLibFolder.resolve("skiko-$hostId")
+internal val SkikoLibFile = SkikoLibFolder.resolve("libskiko-$hostId.so")
 
 private fun ByteArray.toHexString() = buildString {
         this@toHexString.forEach {
