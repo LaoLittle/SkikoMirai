@@ -58,7 +58,7 @@ repositories {
 
 dependencies {
     // 无需编译 && 无需让mirai-console(>= 2.11.0)下载
-    compileOnly("com.github.LaoLittle:SkikoMirai:1.0.4")
+    compileOnly("com.github.LaoLittle:SkikoMirai:1.0.5")
 }
 ```
 
