@@ -3,11 +3,16 @@ package org.laolittle.plugin
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.*
+import io.ktor.http.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.utils.info
 import org.jetbrains.skiko.Library
+import org.laolittle.plugin.SkikoConfig.libSource
+import org.laolittle.plugin.SkikoConfig.skikoVersion
+import java.io.File
 import java.io.InputStream
 
 public object SkikoMirai : KotlinPlugin(
@@ -20,26 +25,53 @@ public object SkikoMirai : KotlinPlugin(
     }
 ) {
     override fun onEnable() {
-        System.setProperty(SKIKO_LIBRARY_PATH_PROPERTY, SkikoLibFolder.path)
-        runBlocking {
-            val downloadLib = suspend {
-                HttpClient(OkHttp).use { client ->
-                    client.get<InputStream>("https://github.com/LaoLittle/SkikoMirai/raw/master/skiko/0.7.17/libskiko-linux-arm64.so").use { input ->
+        SkikoConfig.reload()
+
+
+        val baseUrl = when (libSource) {
+            Source.Github -> "https://github.com/LaoLittle/SkikoLibs/raw/master"
+            Source.Gitee -> "https://gitee.com/laolittle/skiko-libs/raw/master"
+        }
+
+        System.setProperty(SKIKO_LIBRARY_PATH_PROPERTY, SkikoConfig.skikoLibPath)
+        val client = HttpClient(OkHttp)
+        try {
+            runBlocking {
+                val skikoVer = async {
+                    if (skikoVersion == "latest") client.get("$baseUrl/latest")
+                    else skikoVersion
+                }
+
+                val shaFile = File("$SkikoLibFile.sha256")
+                if (!shaFile.isFile) {
+                    val sha = async {
+                        client.get<String>("$baseUrl/skiko/${skikoVer.await()}/${SkikoLibFile.name}.sha256") {
+                            userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 Edg/100.0.1185.29")
+                        }
+                    }
+
+                    shaFile.writeText(sha.await())
+                }
+
+                if (!(SkikoLibFile.isFile && SkikoLibFile.sha256 == shaFile.readText())) {
+                    client.get<InputStream>("$baseUrl/skiko/$skikoVer/${SkikoLibFile.name}").use { input ->
                         SkikoLibFile.outputStream().use { output ->
                             input.copyTo(output)
                         }
                     }
                 }
             }
-
-            val sha = HttpClient(OkHttp).use { client ->
-                client.get<String>("https://raw.githubusercontent.com/LaoLittle/SkikoMirai/master/skiko/0.7.17/libskiko-linux-arm64.so.sha256")
-            }
-
-            if (SkikoLibFile.isFile) println(SkikoLibFile.sha256)
-
-            if (!SkikoLibFile.isFile || SkikoLibFile.sha256 != sha)
-                downloadLib()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            logger.error("""
+                无法获取Skiko运行所需库，请自行前往下载
+                Github: https://github.com/LaoLittle/SkikoLibs/tree/master/skiko
+                Gitee: https://gitee.com/laolittle/skiko-libs/tree/master/skiko
+                
+                遇到意外的错误，本插件将不会启用
+            """.trimIndent())
+        } finally {
+            client.close()
         }
 
         Library.load()
