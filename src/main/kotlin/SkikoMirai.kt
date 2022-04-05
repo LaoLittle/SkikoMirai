@@ -63,13 +63,16 @@ public object SkikoMirai : KotlinPlugin(
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            logger.error("""
-                无法获取Skiko运行所需库，请自行前往下载
+            logger.error(
+                """
+                无法自动获取Skiko运行所需库，请自行前往下载
                 Github: https://github.com/LaoLittle/SkikoLibs/tree/master/skiko
                 Gitee: https://gitee.com/laolittle/skiko-libs/tree/master/skiko
                 
                 遇到意外的错误，本插件将不会启用
-            """.trimIndent())
+            """.trimIndent()
+            )
+            return
         } finally {
             client.close()
         }
