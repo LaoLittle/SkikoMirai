@@ -9,7 +9,7 @@ import kotlinx.coroutines.runBlocking
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.utils.info
-import org.jetbrains.skiko.Library
+import org.jetbrains.skia.impl.Library
 import org.laolittle.plugin.SkikoConfig.libSource
 import org.laolittle.plugin.SkikoConfig.skikoVersion
 import java.io.File
@@ -26,7 +26,6 @@ public object SkikoMirai : KotlinPlugin(
 ) {
     override fun onEnable() {
         SkikoConfig.reload()
-
 
         val baseUrl = when (libSource) {
             Source.Github -> "https://github.com/LaoLittle/SkikoLibs/raw/master"
@@ -77,7 +76,7 @@ public object SkikoMirai : KotlinPlugin(
             client.close()
         }
 
-        Library.load()
+        Library.staticLoad()
 
         fontFolder.mkdirs()
         FontConfig.reload()

@@ -9,7 +9,7 @@ public object SkikoConfig : ReadOnlyPluginConfig("SkikoConfig") {
     public val skikoVersion: String by value("latest")
 
     @ValueDescription("Skiko库所在路径")
-    public val skikoLibPath: String by value(DefaultSkikoLibFolder.path)
+    public val skikoLibPath: String by value(DefaultNativeLibFolder.path)
 
     @ValueDescription("下载源: Github或Gitee")
     public val libSource: Source by value(Source.Github)

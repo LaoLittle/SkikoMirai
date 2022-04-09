@@ -1,17 +1,12 @@
 package org.laolittle.plugin
 
-import net.mamoe.mirai.console.plugin.PluginManager
-import net.mamoe.mirai.console.plugin.id
 import org.jetbrains.skiko.hostId
 import java.io.File
 import java.security.MessageDigest
 
 internal const val SKIKO_LIBRARY_PATH_PROPERTY = "skiko.library.path"
 
-internal val DefaultSkikoLibFolder =
-    PluginManager.pluginsDataFolder.resolve(SkikoMirai.id).resolve("lib").apply { mkdirs() }
-
-internal val SkikoLibFile = DefaultSkikoLibFolder.resolve("libskiko-$hostId.so")
+internal val SkikoLibFile = DefaultNativeLibFolder.resolve(System.mapLibraryName("skiko-$hostId"))
 
 private fun ByteArray.toHexString() = buildString {
     this@toHexString.forEach {
