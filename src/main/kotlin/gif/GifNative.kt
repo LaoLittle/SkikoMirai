@@ -6,9 +6,9 @@ internal typealias RawPointer = Long
 
 internal val nativeNullPtr: Long get() = 0L
 
-public open class GifNative internal constructor(_ptr: RawPointer): Closeable {
+public open class GifNative internal constructor(_ptr: RawPointer) : Closeable {
     public var ptr: RawPointer = _ptr
-    protected set
+        protected set
 
     override fun close(): Unit = throw IllegalStateException("Managed by native")
 

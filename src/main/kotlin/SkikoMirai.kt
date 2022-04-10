@@ -44,7 +44,14 @@ public object SkikoMirai : KotlinPlugin(
                 val shaFile = File("$SkikoLibFile.sha256")
                 if (!shaFile.isFile) {
                     val sha = async {
-                        client.get<String>("$baseUrl/skiko/${skikoVer.await()}/${SkikoLibFile.name}.sha256") {
+                        client.get<String>(
+                            "$baseUrl/skiko/${skikoVer.await()}/${
+                                SkikoLibFile.name.replace(
+                                    Regex(".*.(dll|dylib|so)"),
+                                    ""
+                                )
+                            }.sha256"
+                        ) {
                             userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 Edg/100.0.1185.29")
                         }
                     }
@@ -52,7 +59,7 @@ public object SkikoMirai : KotlinPlugin(
                     shaFile.writeText(sha.await())
                 }
 
-                if (!(SkikoLibFile.isFile && SkikoLibFile.sha256 == shaFile.readText())) {
+                if (!(SkikoLibFile.isFile && SkikoLibFile.sha256.also(::println) == shaFile.readText())) {
                     client.get<InputStream>("$baseUrl/skiko/$skikoVer/${SkikoLibFile.name}").use { input ->
                         SkikoLibFile.outputStream().use { output ->
                             input.copyTo(output)

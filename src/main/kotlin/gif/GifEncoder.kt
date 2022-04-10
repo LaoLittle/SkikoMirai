@@ -1,7 +1,6 @@
 package org.laolittle.plugin.gif
 
-public class GifEncoder(ptr: LongArray) {
-
+public class GifEncoder private constructor(ptr: LongArray) {
     public val collector: Collector = Collector(ptr[0])
     public val writer: Writer = Writer(ptr[1])
 
@@ -11,6 +10,10 @@ public class GifEncoder(ptr: LongArray) {
     public companion object {
         public fun new(setting: GifSetting): GifEncoder =
             GifEncoder(nNewEncoder(setting.width, setting.height, setting.quality, setting.fast, setting.repeat.times))
+
+        init {
+            if (!GifLibrary.loaded) GifLibrary.load()
+        }
     }
 }
 

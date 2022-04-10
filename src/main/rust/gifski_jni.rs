@@ -19,11 +19,11 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_GifEncoderKt_nNewEncoder(
     repeat: jshort,
 ) -> jlongArray {
     let setting = Settings {
-        width: if width <= 0 { None } else { Some(width as u32) },
-        height: if height <= 0 { None } else { Some(height as u32) },
+        width: if width < 0 { None } else { Some(width as u32) },
+        height: if height < 0 { None } else { Some(height as u32) },
         quality: quality as u8,
         fast: fast == JNI_TRUE,
-        repeat: if repeat >=0 { Repeat::Finite(repeat as u16) } else { Repeat::Infinite }
+        repeat: if repeat < 0 { Repeat::Infinite } else { Repeat::Finite(repeat as u16) }
     };
 
     let (c, w) = new(setting).unwrap();
@@ -46,7 +46,7 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_CollectorKt_nCollectorAddFr
     presentation: jdouble,
     ptr: jlong,
 ) -> i64 {
-    let mut collector = *unsafe { Box::<Collector>::from_raw(long_to_raw_ptr(ptr)) };
+    let mut collector = unsafe { Box::<Collector>::from_raw(long_to_raw_ptr(ptr)) };
 
     let len = env.get_array_length(bytes).unwrap();
     let primitive = env.get_primitive_array_critical(bytes, ReleaseMode::CopyBack).unwrap();
@@ -57,7 +57,7 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_CollectorKt_nCollectorAddFr
         collector.add_frame_rgba_cow(frame_index as usize, image, presentation).unwrap();
     }
 
-    let raw = Box::into_raw(collector.into());
+    let raw = Box::into_raw(collector);
     raw_ptr_to_long(raw)
 }
 

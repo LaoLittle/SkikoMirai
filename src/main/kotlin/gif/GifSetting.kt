@@ -22,6 +22,6 @@ public class GifSetting public constructor(
     }
 
     public companion object {
-        public fun default(): GifSetting = GifSetting(0,0,100, false, Repeat.Infinite)
+        public fun default(): GifSetting = GifSetting(0, 0, 100, false, Repeat.Infinite)
     }
 }

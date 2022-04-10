@@ -1,8 +1,10 @@
 package org.laolittle.plugin.gif
 
-import java.util.ArrayList
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
-public class GifImage(private val images: Array<ByteArray>,public val bytes: ByteArray) {
+public class GifImage internal constructor(private val images: Array<ByteArray>, public val bytes: ByteArray) {
     public val frameCount: Int get() = images.size
 
     public val frames: Array<ByteArray> get() = images
@@ -18,13 +20,23 @@ public class GifImageBuilder(setting: GifSetting = GifSetting.default()) {
     public fun addFrame(image: ByteArray, delay: Double = 1.0): Boolean = images.add(image to delay)
 
     public suspend fun build(): GifImage {
-        val (collector, writer) = encoder
-        for (image in images) {
-            collector.addFrame(image.first, frameIndex++, image.second)
-        }
-        collector.close()
+        return coroutineScope {
+            val (collector, writer) = encoder
+            val result = async(Dispatchers.IO) {
+                writer.writeToBytes()
+            }
 
-        return GifImage(images.map { it.first }.toTypedArray(), writer.writeToBytes())
+            for (image in images) {
+                collector.addFrame(image.first, frameIndex++, image.second * frameIndex)
+            }
+            collector.close()
+
+            GifImage(images.map { it.first }.toTypedArray(), result.await())
+        }
+    }
+
+    init {
+        if (!GifLibrary.loaded) GifLibrary.load()
     }
 }
 
