@@ -23,7 +23,7 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_GifEncoderKt_nNewEncoder(
         height: if height < 0 { None } else { Some(height as u32) },
         quality: quality as u8,
         fast: fast == JNI_TRUE,
-        repeat: if repeat < 0 { Repeat::Infinite } else { Repeat::Finite(repeat as u16) }
+        repeat: if repeat < 0 { Repeat::Infinite } else { Repeat::Finite(repeat as u16) },
     };
 
     let (c, w) = new(setting).unwrap();
@@ -44,15 +44,37 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_CollectorKt_nCollectorAddFr
     bytes: jbyteArray,
     frame_index: jint,
     presentation: jdouble,
-    ptr: jlong,
+    collector: jlong,
 ) -> i64 {
-    let mut collector = unsafe { Box::<Collector>::from_raw(long_to_raw_ptr(ptr)) };
+    let mut collector = unsafe { Box::<Collector>::from_raw(long_to_raw_ptr(collector)) };
 
     let len = env.get_array_length(bytes).unwrap();
     let primitive = env.get_primitive_array_critical(bytes, ReleaseMode::CopyBack).unwrap();
     let data = unsafe { &*slice_from_raw_parts(primitive.as_ptr() as *const u8, len as usize) };
 
-    if let Ok(bitmap) = lodepng::decode32(data) {
+    if let Ok(bitmap) = lodepng::decode32(&data) {
+        let image: Img<Cow<[RGBA8]>> = Img::new(bitmap.buffer.into(), bitmap.width, bitmap.height);
+        collector.add_frame_rgba_cow(frame_index as usize, image, presentation).unwrap();
+    }
+
+    let raw = Box::into_raw(collector);
+    raw_ptr_to_long(raw)
+}
+
+#[no_mangle]
+pub extern "system" fn Java_org_laolittle_plugin_gif_CollectorKt_nCollectorAddPngFile(
+    env: JNIEnv,
+    _class: JClass,
+    path: jstring,
+    frame_index: jint,
+    presentation: jdouble,
+    collector: jlong,
+) -> i64 {
+    let mut collector = unsafe { Box::<Collector>::from_raw(long_to_raw_ptr(collector)) };
+    let str = env.get_string(path.into()).unwrap();
+    let path = str.to_str().unwrap();
+
+    if let Ok(bitmap) = lodepng::decode32_file(path) {
         let image: Img<Cow<[RGBA8]>> = Img::new(bitmap.buffer.into(), bitmap.width, bitmap.height);
         collector.add_frame_rgba_cow(frame_index as usize, image, presentation).unwrap();
     }
@@ -65,9 +87,9 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_CollectorKt_nCollectorAddFr
 pub extern "system" fn Java_org_laolittle_plugin_gif_CollectorKt_nCloseCollector(
     _env: JNIEnv,
     _class: JClass,
-    ptr: jlong,
+    collector: jlong,
 ) {
-    unsafe { Box::<Collector>::from_raw(long_to_raw_ptr(ptr)) };
+    unsafe { Box::<Collector>::from_raw(long_to_raw_ptr(collector)) };
 }
 
 #[no_mangle]
@@ -99,6 +121,15 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_WriterKt_nWriteToBytes(
     writer.write(&mut buff, &mut nop).unwrap();
 
     env.byte_array_from_slice(&buff).unwrap()
+}
+
+#[no_mangle]
+pub extern "system" fn Java_org_laolittle_plugin_gif_WriterKt_nCloseWriter(
+    _env: JNIEnv,
+    _class: JClass,
+    writer: jlong,
+) {
+    unsafe { Box::<Writer>::from_raw(long_to_raw_ptr(writer)) };
 }
 
 fn raw_ptr_to_long<T>(ptr: *const T) -> i64 {
