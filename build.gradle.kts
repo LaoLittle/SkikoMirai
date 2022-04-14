@@ -34,7 +34,7 @@ publishing {
 
 dependencies {
     // 为防止mirai获取多余的依赖
-    val skikoVersion = "0.7.17"
+    val skikoVersion = "0.7.16"
     api("org.jetbrains.skiko:skiko-awt:$skikoVersion")
 
     /*

@@ -35,7 +35,7 @@ public object SkikoMirai : KotlinPlugin(
         System.setProperty(SKIKO_LIBRARY_PATH_PROPERTY, SkikoConfig.skikoLibPath)
         val client = HttpClient(OkHttp)
         try {
-            runBlocking {
+            runBlocking(coroutineContext) {
                 val skikoVer = async {
                     if (skikoVersion == "latest") client.get("$baseUrl/latest")
                     else skikoVersion
@@ -68,17 +68,19 @@ public object SkikoMirai : KotlinPlugin(
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
-            logger.error(
-                """
+            if (!SkikoLibFile.isFile) {
+                e.printStackTrace()
+                logger.error(
+                    """
                 无法自动获取Skiko运行所需库，请自行前往下载
                 Github: https://github.com/LaoLittle/SkikoLibs/tree/master/skiko
                 Gitee: https://gitee.com/laolittle/skiko-libs/tree/master/skiko
                 
                 遇到意外的错误，本插件将不会启用
             """.trimIndent()
-            )
-            return
+                )
+                return
+            }
         } finally {
             client.close()
         }

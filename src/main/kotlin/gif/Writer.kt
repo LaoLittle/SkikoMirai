@@ -23,8 +23,16 @@ public class Writer(_ptr: RawPointer) : GifNative(_ptr) {
         canWrite = false
         return nWriteToBytes(ptr)
     }
+
+    override fun close() {
+        canWrite = false
+        if (dropped) error("Already closed")
+        nCloseWriter(ptr)
+    }
 }
 
 private external suspend fun nWriteToFile(path: String, writer: RawPointer)
 
 private external suspend fun nWriteToBytes(writer: RawPointer): ByteArray
+
+private external fun nCloseWriter(writer: RawPointer)
