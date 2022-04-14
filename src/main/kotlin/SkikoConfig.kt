@@ -5,6 +5,9 @@ import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
 public object SkikoConfig : ReadOnlyPluginConfig("SkikoConfig") {
+    @ValueDescription("检查Skiko版本")
+    public val check: Boolean by value(false)
+
     @ValueDescription("使用的Skiko库版本")
     public val skikoVersion: String by value("latest")
 

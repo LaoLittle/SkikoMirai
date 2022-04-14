@@ -6,6 +6,32 @@
 
 Based on [Jetbrains/skiko](https://github.com/JetBrains/skiko)
 
+### 使用说明
+
+-----
+- 1.启动一次插件，生成插件的数据目录
+   - 位于`data/org.laolittle.plugin.SkikoMirai` *
+- 2.从 https://github.com/LaoLittle/SkikoLibs 获取你所需要的库文件
+  - 请根据操作系统自行选择，若不会操作则全部下载。
+- 3.将下载得到的库放入插件数据目录*下的`lib`文件夹内
+- 4.启动插件
+
+-----
+### Gif编码器
+
+-----
+本插件利用`jni`调用Rust编写的[Gif编 / 解码器](https://github.com/ImageOptim/gifski)，相关源码位于
+
+`src/main/kotlin/gif`及`src/main/rust`内
+
+自行编译：Clone本项目，切换到`./gifski`目录下
+
+然后执行`cargo build --release`
+
+若要使用Gif编解码器，请将`gifski`库文件放置于`lib`文件夹内
+
+-----
+
 支持的平台:
 - Windows-x86_64
 - Linux-x86_64
