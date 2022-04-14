@@ -19,6 +19,6 @@ suspend fun main() {
         collector.addFrame(File("img0.png").readBytes(), 0, 0.0)
         collector.addFrame(File("img1.png").readBytes(), 1, 1.0)
         collector.close()
-        writer.writeToBytes().also { File("f.gif").writeBytes(it) }
+        if (writer.canWrite) writer.writeToBytes().also { File("f.gif").writeBytes(it) }
     }.also(::println)
 }
