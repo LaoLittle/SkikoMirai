@@ -8,6 +8,7 @@ internal val nativeNullPtr: Long get() = 0L
 
 public open class GifNative internal constructor(_ptr: RawPointer) : Closeable {
     public var dropped: Boolean = false
+        protected set
 
     public var ptr: RawPointer = _ptr
         protected set

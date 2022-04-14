@@ -1,9 +1,6 @@
 package org.laolittle.plugin.gif
 
 public class Collector(_ptr: RawPointer) : GifNative(_ptr) {
-    public var dropped: Boolean = false
-        private set
-
     override fun close() {
         if (dropped) error("Already closed")
         nCloseCollector(ptr)
