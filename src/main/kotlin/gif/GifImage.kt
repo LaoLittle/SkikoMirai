@@ -10,10 +10,8 @@ public class GifImage internal constructor(private val images: Array<ByteArray>,
     public val frames: Array<ByteArray> get() = images
 }
 
-public class GifImageBuilder(setting: GifSetting = GifSetting.default()) {
+public class GifImageBuilder(private val setting: GifSetting = GifSetting.default()) {
     private var frameIndex = 0
-
-    public val encoder: GifEncoder = GifEncoder.new(setting)
 
     private val images: ArrayList<Pair<ByteArray, Double>> = arrayListOf()
 
@@ -21,7 +19,7 @@ public class GifImageBuilder(setting: GifSetting = GifSetting.default()) {
 
     public suspend fun build(): GifImage {
         return coroutineScope {
-            val (collector, writer) = encoder
+            val (collector, writer) = GifEncoder.new(setting)
             val result = async(Dispatchers.IO) {
                 writer.writeToBytes()
             }

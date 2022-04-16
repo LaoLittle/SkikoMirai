@@ -1,5 +1,8 @@
 package org.laolittle.plugin.gif
 
+/**
+ * 图片收集器
+ */
 public class Collector(_ptr: RawPointer) : GifNative(_ptr) {
     public fun addFrame(bytes: ByteArray, frameIndex: Int, presentation: Double) {
         if (dropped) error("Already closed")
@@ -11,6 +14,9 @@ public class Collector(_ptr: RawPointer) : GifNative(_ptr) {
         ptr = nCollectorAddPngFile(path, frameIndex, presentation, ptr)
     }
 
+    /**
+     * 释放本[Collector]
+     */
     override fun close() {
         if (dropped) error("Already closed")
         nCloseCollector(ptr)
