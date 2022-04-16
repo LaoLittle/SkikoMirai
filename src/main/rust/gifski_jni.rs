@@ -2,7 +2,7 @@ use std::borrow::Cow;
 use std::fs::File;
 use std::ptr::slice_from_raw_parts;
 use imgref::Img;
-use jni::JNIEnv;
+use jni::{JNIEnv};
 use jni::objects::{JClass, ReleaseMode};
 use jni::sys::{jboolean, jbyte, jbyteArray, jdouble, jint, jlong, jlongArray, JNI_TRUE, jshort, jstring};
 use rgb::RGBA8;
@@ -121,15 +121,6 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_WriterKt_nWriteToBytes(
     writer.write(&mut buff, &mut nop).unwrap();
 
     env.byte_array_from_slice(&buff).unwrap()
-}
-
-#[no_mangle]
-pub extern "system" fn Java_org_laolittle_plugin_gif_WriterKt_nCloseWriter(
-    _env: JNIEnv,
-    _class: JClass,
-    writer: jlong,
-) {
-    unsafe { Box::<Writer>::from_raw(long_to_raw_ptr(writer)) };
 }
 
 fn raw_ptr_to_long<T>(ptr: *const T) -> i64 {
