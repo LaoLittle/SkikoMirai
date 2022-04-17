@@ -1,6 +1,6 @@
 package org.laolittle.plugin.gif
 
-import io.ktor.utils.io.core.*
+import java.io.Closeable
 
 internal typealias RawPointer = Long
 internal typealias RawPointerArray = LongArray

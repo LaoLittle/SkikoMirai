@@ -24,10 +24,11 @@ public class GifImageBuilder(private val setting: GifSetting = GifSetting.defaul
                 writer.writeToBytes()
             }
 
-            for (image in images) {
-                collector.addFrame(image.first, frameIndex++, image.second * frameIndex)
+            collector.use {
+                for (image in images) {
+                    it.addFrame(image.first, frameIndex++, image.second * frameIndex)
+                }
             }
-            collector.close()
 
             GifImage(images.map { it.first }.toTypedArray(), result.await())
         }

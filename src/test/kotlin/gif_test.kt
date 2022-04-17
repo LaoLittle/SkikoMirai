@@ -13,6 +13,10 @@ suspend fun main() {
     val encoder = GifEncoder.new(GifSetting(
         112, 112, 100, true, GifSetting.Repeat.Infinite
     ))
+
+    encoder.writer
+    encoder.collector
+
     measureTimeMillis {
         val (collector, writer) = encoder
 
