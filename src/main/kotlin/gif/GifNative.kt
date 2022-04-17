@@ -28,7 +28,7 @@ public open class GifNative internal constructor(_ptr: RawPointer) : Closeable {
     }
 
     override fun toString(): String {
-        return "${this::class.simpleName}(ptr=$ptr)"
+        return "${this::class.simpleName ?: "<GifNative>"}(ptr=$ptr)"
     }
 
     init {
