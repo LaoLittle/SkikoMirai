@@ -16,6 +16,21 @@ public open class GifNative internal constructor(_ptr: RawPointer) : Closeable {
 
     override fun close(): Unit = throw IllegalStateException("Managed by native")
 
+    override fun equals(other: Any?): Boolean {
+        if (other !is GifNative) return false
+        return this.ptr == other.ptr
+    }
+
+    override fun hashCode(): Int {
+        var result = dropped.hashCode()
+        result = 31 * result + ptr.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "${this::class.simpleName}(ptr=$ptr)"
+    }
+
     init {
         if (!GifLibrary.loaded) GifLibrary.load()
         require(_ptr != nativeNullPtr) { "Can't wrap nullptr, which is supposed to use by ${this::class.simpleName}" }
