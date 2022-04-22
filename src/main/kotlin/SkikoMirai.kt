@@ -30,7 +30,6 @@ public object SkikoMirai : KotlinPlugin(
             Source.Gitee -> "https://gitee.com/laolittle/skiko-libs/raw/master"
         }
 
-        System.setProperty(SKIKO_LIBRARY_PATH_PROPERTY, SkikoConfig.skikoLibPath)
         if (SkikoConfig.check) {
             val client = HttpClient(OkHttp)
             try {
@@ -85,10 +84,14 @@ public object SkikoMirai : KotlinPlugin(
             }
         }
 
-        Library.staticLoad()
-
         fontFolder.mkdirs()
         FontConfig.reload()
         logger.info { "Plugin loaded" }
+    }
+
+    public fun loadSkikoLibrary() {
+        System.setProperty(SKIKO_LIBRARY_PATH_PROPERTY, SkikoConfig.skikoLibPath)
+
+        Library.staticLoad()
     }
 }
