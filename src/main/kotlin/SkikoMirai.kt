@@ -17,7 +17,7 @@ public object SkikoMirai : KotlinPlugin(
     JvmPluginDescription(
         id = "org.laolittle.plugin.SkikoMirai",
         name = "SkikoMirai",
-        version = "1.0.6",
+        version = "1.0.7",
     ) {
         author("LaoLittle")
     }
