@@ -40,6 +40,10 @@ public object Fonts {
             Font(Typeface.makeDefault(), size)
         }
     }
+
+    init {
+        SkikoMirai.loadSkikoLibrary()
+    }
 }
 
 public val fontFolder: File = SkikoMirai.dataFolder.resolve("Fonts")

@@ -10,11 +10,7 @@ public class GifSetting public constructor(
     public sealed class Repeat private constructor(public val times: Short) {
         public object Infinite : Repeat(-1)
 
-        public class Finite(times: Short) : Repeat(times) {
-            init {
-                require(times in 0..100) { "Times times must be within 1 to 100, but got $times" }
-            }
-        }
+        public class Finite(times: Short) : Repeat(times)
     }
 
     init {
