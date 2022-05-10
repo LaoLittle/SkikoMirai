@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "org.laolittle.plugin"
-version = "1.0.7"
+version = "1.0.8"
 
 kotlin {
     explicitApi = ExplicitApiMode.Strict
