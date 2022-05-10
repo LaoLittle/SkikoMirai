@@ -32,7 +32,7 @@ public open class GifNative internal constructor(_ptr: RawPointer) : Closeable {
     }
 
     init {
-        if (!GifLibrary.loaded) GifLibrary.load()
+        GifLibrary.load()
         require(_ptr != nativeNullPtr) { "Can't wrap nullptr, which is supposed to use by ${this::class.simpleName}" }
     }
 }

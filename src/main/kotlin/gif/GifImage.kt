@@ -35,7 +35,7 @@ public class GifImageBuilder(private val setting: GifSetting = GifSetting.defaul
     }
 
     init {
-        if (!GifLibrary.loaded) GifLibrary.load()
+        GifLibrary.load()
     }
 }
 

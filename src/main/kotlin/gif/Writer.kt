@@ -2,7 +2,7 @@ package org.laolittle.plugin.gif
 
 import java.io.File
 
-public class Writer(_ptr: RawPointer) : GifNative(_ptr) {
+public class Writer internal constructor(_ptr: RawPointer) : GifNative(_ptr) {
     public val canWrite: Boolean get() = !dropped
 
     /**
@@ -31,6 +31,10 @@ public class Writer(_ptr: RawPointer) : GifNative(_ptr) {
         return nWriteToBytes(ptr).also {
             dropped = true
         }
+    }
+
+    init {
+        GifLibrary.load()
     }
 }
 

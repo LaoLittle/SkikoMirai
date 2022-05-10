@@ -1,12 +1,11 @@
 package org.laolittle.plugin
 
-import org.jetbrains.skia.Font
-import org.jetbrains.skia.FontStyle
-import org.jetbrains.skia.Typeface
-import org.jetbrains.skia.makeFromFile
+import org.jetbrains.skia.*
 import java.io.File
 
 internal val typeFaces = mutableMapOf<String, Typeface>()
+internal val globalFontIsDefault = FontConfig.globalFont == "default"
+private val fontMgr get() = FontMgr.default
 
 public object Fonts {
     public operator fun get(fontName: String, size: Float = 100F): Font {
@@ -20,14 +19,21 @@ public object Fonts {
                     "BOLD_ITALIC" -> FontStyle.BOLD_ITALIC
                     else -> FontStyle.NORMAL
                 }
-                Font(
-                    typeFaces.getOrPut(fontName) {
-                        Typeface.makeFromName(
-                            fontName.replace(Regex("""-(?i)(?:BOLD|ITALIC|BOLD_ITALIC|NORMAL)$"""), ""),
-                            style
-                        )
-                    }, size
-                )
+
+                fontMgr.matchFamilyStyle(
+                    fontName.replace(
+                        Regex("""-(?i)(?:BOLD|ITALIC|BOLD_ITALIC|NORMAL)$"""),
+                        ""
+                    ), style
+                )?.let {
+                    Font(
+                        typeFaces.getOrPut(fontName) {
+                            it
+                        }, size
+                    )
+                } ?: if (globalFontIsDefault) Font(Typeface.makeDefault(), size) else Fonts[FontConfig.globalFont, size]
+
+
             } else {
                 val file = fontFolder.resolve(fileName)
                 require(file.isFile) { "无法找到字体: $fontName" }
@@ -42,6 +48,7 @@ public object Fonts {
     }
 
     init {
+        System.setProperty(SKIKO_LIBRARY_PATH_PROPERTY, SkikoConfig.skikoLibPath)
         SkikoMirai.loadSkikoLibrary()
     }
 }

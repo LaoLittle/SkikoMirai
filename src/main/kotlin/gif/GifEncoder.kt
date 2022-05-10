@@ -16,7 +16,7 @@ public class GifEncoder private constructor(ptr: RawPointerArray) {
             GifEncoder(nNewEncoder(setting.width, setting.height, setting.quality, setting.fast, setting.repeat.times))
 
         init {
-            if (!GifLibrary.loaded) GifLibrary.load()
+            GifLibrary.load()
         }
     }
 }
