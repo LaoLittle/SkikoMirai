@@ -84,14 +84,17 @@ public object SkikoMirai : KotlinPlugin(
             }
         }
 
+        loadSkikoLibrary()
         fontFolder.mkdirs()
         FontConfig.reload()
         logger.info { "Plugin loaded" }
     }
 
     public fun loadSkikoLibrary() {
-        System.setProperty(SKIKO_LIBRARY_PATH_PROPERTY, SkikoConfig.skikoLibPath)
-
         Library.staticLoad()
+    }
+
+    init {
+        System.setProperty(SKIKO_LIBRARY_PATH_PROPERTY, SkikoConfig.skikoLibPath)
     }
 }
