@@ -1,16 +1,16 @@
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
-    val kotlinVersion = "1.6.20"
+    val kotlinVersion = "1.7.0"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.11.0-M2"
+    id("net.mamoe.mirai-console") version "2.11.1"
     `maven-publish`
 }
 
 group = "org.laolittle.plugin"
-version = "1.0.8"
+version = "1.1.0"
 
 kotlin {
     explicitApi = ExplicitApiMode.Strict
@@ -35,7 +35,10 @@ publishing {
 dependencies {
     // 为防止mirai获取多余的依赖
     val skikoVersion = "0.7.16"
-    api("org.jetbrains.skiko:skiko-awt:$skikoVersion")
+    api("org.jetbrains.skiko:skiko-awt:$skikoVersion") {
+        exclude("org.jetbrains.kotlin")
+        exclude("org.jetbrains.kotlinx")
+    }
 
     /*
     implementation("org.jetbrains.skiko:skiko-awt-runtime-linux-x64:$skikoVersion")

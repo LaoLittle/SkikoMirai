@@ -1,23 +1,27 @@
 package org.laolittle.plugin
 
-import io.ktor.client.*
-import io.ktor.client.engine.okhttp.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import kotlinx.coroutines.async
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.runInterruptible
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.utils.info
-import org.jetbrains.skia.impl.Library
-import java.io.File
-import java.io.InputStream
+import org.jetbrains.skiko.Library
+import org.jetbrains.skiko.OS.*
+import org.jetbrains.skiko.hostId
+import org.jetbrains.skiko.hostOs
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import kotlin.io.path.*
 
 public object SkikoMirai : KotlinPlugin(
     JvmPluginDescription(
         id = "org.laolittle.plugin.SkikoMirai",
         name = "SkikoMirai",
-        version = "1.0.8",
+        version = "1.1.0",
     ) {
         author("LaoLittle")
     }
@@ -25,62 +29,55 @@ public object SkikoMirai : KotlinPlugin(
     override fun onEnable() {
         SkikoConfig.reload()
 
-        val baseUrl = when (SkikoConfig.libSource) {
-            Source.Github -> "https://github.com/LaoLittle/SkikoLibs/raw/master"
-            Source.Gitee -> "https://gitee.com/laolittle/skiko-libs/raw/master"
-        }
-
         if (SkikoConfig.check) {
-            val client = HttpClient(OkHttp)
-            try {
-                runBlocking(coroutineContext) {
-                    val skikoVer = async {
-                        if (SkikoConfig.skikoVersion == "latest") client.get("$baseUrl/latest")
-                        else SkikoConfig.skikoVersion
-                    }
+            logger.info { "开始下载skiko运行所需库" }
+            val cacheFile = SkikoLibPath.toPath().resolve("cache").also(Path::createDirectories).resolve("$hostId.jar")
 
-                    val shaFile = File("$SkikoLibFile.sha256")
-                    if (!shaFile.isFile) {
-                        val sha = async {
-                            client.get<String>(
-                                "$baseUrl/skiko/${skikoVer.await()}/${
-                                    SkikoLibFile.name.replace(
-                                        Regex(".*.(dll|dylib|so)"),
-                                        ""
-                                    )
-                                }.sha256"
-                            ) {
-                                userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 Edg/100.0.1185.29")
-                            }
+            val ver = Version.fromString(org.jetbrains.skiko.Version.skiko)
+
+            val verFile = SkikoLibPath.resolve(".$ver").toPath()
+            if (!verFile.isRegularFile()) {
+                SkikoLibPath.toPath().firstOrNull { it.name.first() == '.' }?.deleteExisting()
+                runBlocking(coroutineContext + CoroutineExceptionHandler { _, e -> e.printStackTrace() }) {
+                    getSkiko(ver).use { input ->
+                        cacheFile.outputStream(CREATE, TRUNCATE_EXISTING, WRITE).use { out ->
+                            input.copyTo(out)
                         }
-
-                        shaFile.writeText(sha.await())
                     }
 
-                    if (!(SkikoLibFile.isFile && SkikoLibFile.sha256.also(::println) == shaFile.readText())) {
-                        client.get<InputStream>("$baseUrl/skiko/$skikoVer/${SkikoLibFile.name}").use { input ->
-                            SkikoLibFile.outputStream().use { output ->
-                                input.copyTo(output)
+                    val zip = runInterruptible(Dispatchers.IO) {
+                        ZipFile(cacheFile.toFile())
+                    }
+
+                    suspend fun copyZipTo(entry: ZipEntry, output: Path) {
+                        runInterruptible(Dispatchers.IO) {
+                            zip.getInputStream(entry).use { input ->
+                                output.outputStream().use(input::copyTo)
                             }
                         }
                     }
+
+                    copyZipTo(zip.getEntry(SkikoLibFile.name) ?: throw IllegalStateException(), SkikoLibFile.toPath())
+
+                    when (hostOs) {
+                        Android, Ios, JS -> {
+                            logger.error("暂不支持$hostId")
+                        }
+
+                        Linux, MacOS -> {
+
+                        }
+
+                        Windows -> {
+                            copyZipTo(zip.getEntry("icudtl.dat") ?: run {
+                                throw IllegalStateException()
+                            }, Path(SkikoConfig.skikoLibPath).resolve("icudtl.dat"))
+                        }
+                    }
+
+                    cacheFile.deleteIfExists()
+                    verFile.createFile()
                 }
-            } catch (e: Exception) {
-                if (!SkikoLibFile.isFile) {
-                    e.printStackTrace()
-                    logger.error(
-                        """
-                无法自动获取Skiko运行所需库，请自行前往下载
-                Github: https://github.com/LaoLittle/SkikoLibs/tree/master/skiko
-                Gitee: https://gitee.com/laolittle/skiko-libs/tree/master/skiko
-                
-                遇到意外的错误，本插件将不会启用
-            """.trimIndent()
-                    )
-                    return
-                }
-            } finally {
-                client.close()
             }
         }
 
@@ -91,7 +88,7 @@ public object SkikoMirai : KotlinPlugin(
     }
 
     public fun loadSkikoLibrary() {
-        Library.staticLoad()
+        Library.load()
     }
 
     init {
