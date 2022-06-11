@@ -4,7 +4,7 @@ import org.laolittle.plugin.DefaultNativeLibFolder
 import java.util.concurrent.atomic.AtomicBoolean
 
 public object GifLibrary {
-    internal val loaded = AtomicBoolean(false)
+    private val loaded = AtomicBoolean(false)
 
     private val defaultGifLibrary = DefaultNativeLibFolder.resolve(System.mapLibraryName("gifski"))
 
