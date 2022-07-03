@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.11.1"
+    id("net.mamoe.mirai-console") version "2.12.0-RC"
     `maven-publish`
 }
 
@@ -17,9 +17,9 @@ kotlin {
 }
 
 repositories {
-    mavenCentral()
     maven("https://maven.aliyun.com/repository/central")
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    mavenCentral()
+    //maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 publishing {
@@ -33,9 +33,25 @@ publishing {
 }
 
 dependencies {
-    // 为防止mirai获取多余的依赖
-    val skikoVersion = "0.7.16"
+    val skikoVersion = "0.7.20"
     api("org.jetbrains.skiko:skiko-awt:$skikoVersion") {
+        exclude("org.jetbrains.kotlin")
+        exclude("org.jetbrains.kotlinx")
+    }
+
+    val ktorVersion = "1.6.7"
+    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion") {
+        //exclude("io.ktor")
+        //exclude("com.squareup.okhttp3")
+        //exclude("com.squareup.okio")
+        exclude("org.jetbrains.kotlin")
+        exclude("org.jetbrains.kotlinx")
+    }
+    
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion") {
+        exclude("io.ktor")
+        exclude("com.squareup.okhttp3")
+        exclude("com.squareup.okio")
         exclude("org.jetbrains.kotlin")
         exclude("org.jetbrains.kotlinx")
     }

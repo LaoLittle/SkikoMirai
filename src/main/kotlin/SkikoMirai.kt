@@ -32,7 +32,7 @@ public object SkikoMirai : KotlinPlugin(
         if (SkikoConfig.check) {
             logger.info { "开始下载skiko运行所需库" }
             val cacheFile = SkikoLibPath.toPath().resolve("cache").also(Path::createDirectories).resolve("$hostId.jar")
-            val skVer = Version.fromString(org.jetbrains.skiko.Version.skiko)
+            val skVer = Version.fromStringOrNull(SkikoConfig.skikoVersion) ?: Version.fromString(org.jetbrains.skiko.Version.skiko)
             val verFile = SkikoLibPath.resolve("skikomirai.lock").toPath()
 
             kotlin.run checkVer@{
