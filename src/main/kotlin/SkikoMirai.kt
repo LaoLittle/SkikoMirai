@@ -1,6 +1,5 @@
 package org.laolittle.plugin
 
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.runInterruptible
@@ -29,17 +28,25 @@ public object SkikoMirai : KotlinPlugin(
     override fun onEnable() {
         SkikoConfig.reload()
 
+        System.setProperty(SKIKO_LIBRARY_PATH_PROPERTY, SkikoConfig.skikoLibPath)
         if (SkikoConfig.check) {
             logger.info { "开始下载skiko运行所需库" }
             val cacheFile = SkikoLibPath.toPath().resolve("cache").also(Path::createDirectories).resolve("$hostId.jar")
+            val skVer = Version.fromString(org.jetbrains.skiko.Version.skiko)
+            val verFile = SkikoLibPath.resolve("skikomirai.lock").toPath()
 
-            val ver = Version.fromString(org.jetbrains.skiko.Version.skiko)
+            kotlin.run checkVer@{
+                if (SkikoLibFile.isFile)
+                    kotlin.run getVer@{
+                        if (verFile.isRegularFile()) {
+                            val ver = Version.fromStringOrNull(verFile.readText()) ?: return@getVer
 
-            val verFile = SkikoLibPath.resolve(".$ver").toPath()
-            if (!verFile.isRegularFile()) {
-                SkikoLibPath.toPath().firstOrNull { it.name.first() == '.' }?.deleteExisting()
-                runBlocking(coroutineContext + CoroutineExceptionHandler { _, e -> e.printStackTrace() }) {
-                    getSkiko(ver).use { input ->
+                            if (ver >= skVer) return@checkVer
+                        }
+                    }
+
+                runBlocking(coroutineContext) {
+                    getSkiko(skVer).use { input ->
                         cacheFile.outputStream(CREATE, TRUNCATE_EXISTING, WRITE).use { out ->
                             input.copyTo(out)
                         }
@@ -75,8 +82,15 @@ public object SkikoMirai : KotlinPlugin(
                         }
                     }
 
-                    cacheFile.deleteIfExists()
-                    verFile.createFile()
+                    try {
+                        cacheFile.deleteIfExists()
+                    } catch (e: FileSystemException) {
+                        logger.warning("删除缓存文件$cacheFile 失败，请手动删除。")
+                    }
+                }
+
+                verFile.outputStream(CREATE, TRUNCATE_EXISTING, WRITE).use {
+                    it.write(skVer.toString().toByteArray())
                 }
             }
         }
