@@ -20,7 +20,7 @@ public object SkikoMirai : KotlinPlugin(
     JvmPluginDescription(
         id = "org.laolittle.plugin.SkikoMirai",
         name = "SkikoMirai",
-        version = "1.1.1",
+        version = "1.1.3",
     ) {
         author("LaoLittle")
     }
@@ -83,6 +83,10 @@ public object SkikoMirai : KotlinPlugin(
                     }
 
                     try {
+                        runInterruptible(Dispatchers.IO) {
+                            zip.close()
+                        }
+
                         cacheFile.deleteIfExists()
                     } catch (e: FileSystemException) {
                         logger.warning("删除缓存文件$cacheFile 失败，请手动删除。")
@@ -94,18 +98,17 @@ public object SkikoMirai : KotlinPlugin(
                 }
             }
         }
-
         loadSkikoLibrary()
+
         fontFolder.mkdirs()
         FontConfig.reload()
         logger.info { "Plugin loaded" }
     }
 
     public fun loadSkikoLibrary() {
-        Library.load()
-    }
-
-    init {
-        System.setProperty(SKIKO_LIBRARY_PATH_PROPERTY, SkikoConfig.skikoLibPath)
+        synchronized(System.getProperties()) {
+            System.setProperty(SKIKO_LIBRARY_PATH_PROPERTY, SkikoConfig.skikoLibPath)
+            Library.load()
+        }
     }
 }

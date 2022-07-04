@@ -5,12 +5,12 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.12.0-RC"
+    id("net.mamoe.mirai-console") version "2.12.0"
     `maven-publish`
 }
 
 group = "org.laolittle.plugin"
-version = "1.1.1"
+version = "1.1.3"
 
 kotlin {
     explicitApi = ExplicitApiMode.Strict
@@ -40,21 +40,8 @@ dependencies {
     }
 
     val ktorVersion = "1.6.7"
-    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion") {
-        //exclude("io.ktor")
-        //exclude("com.squareup.okhttp3")
-        //exclude("com.squareup.okio")
-        exclude("org.jetbrains.kotlin")
-        exclude("org.jetbrains.kotlinx")
-    }
-    
-    implementation("io.ktor:ktor-client-okhttp:$ktorVersion") {
-        exclude("io.ktor")
-        exclude("com.squareup.okhttp3")
-        exclude("com.squareup.okio")
-        exclude("org.jetbrains.kotlin")
-        exclude("org.jetbrains.kotlinx")
-    }
+    implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
 
     /*
     implementation("org.jetbrains.skiko:skiko-awt-runtime-linux-x64:$skikoVersion")
