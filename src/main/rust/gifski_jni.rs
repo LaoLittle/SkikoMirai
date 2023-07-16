@@ -1,11 +1,12 @@
-use std::borrow::Cow;
 use std::fs::File;
 use std::ptr::slice_from_raw_parts;
-use imgref::Img;
-use jni::{JNIEnv};
-use jni::objects::{JClass, ReleaseMode};
-use jni::sys::{jboolean, jbyte, jbyteArray, jdouble, jint, jlong, jlongArray, JNI_TRUE, jshort, jstring};
+
+use imgref::{Img, ImgVec};
+use jni::JNIEnv;
+use jni::objects::{JByteArray, JClass, JString, ReleaseMode};
+use jni::sys::{jboolean, jbyte, jbyteArray, jdouble, jint, jlong, jlongArray, JNI_TRUE, jshort};
 use rgb::RGBA8;
+
 use crate::{Collector, new, NoProgress, Repeat, Settings, Writer};
 
 #[no_mangle]
@@ -33,28 +34,31 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_GifEncoderKt_nNewEncoder(
 
     let ptr = env.new_long_array(2).unwrap();
 
-    env.set_long_array_region(ptr, 0, &[raw_ptr_to_long(c_raw), raw_ptr_to_long(w_raw)]).unwrap();
-    ptr
+    env.set_long_array_region(&ptr, 0, &[raw_ptr_to_long(c_raw), raw_ptr_to_long(w_raw)]).unwrap();
+
+    ptr.into_raw()
 }
 
 #[no_mangle]
 pub extern "system" fn Java_org_laolittle_plugin_gif_CollectorKt_nCollectorAddFrameBytes(
-    env: JNIEnv,
+    mut env: JNIEnv,
     _class: JClass,
-    bytes: jbyteArray,
+    bytes: JByteArray,
     frame_index: jint,
     presentation: jdouble,
     collector: jlong,
-) -> i64 {
-    let mut collector = unsafe { Box::<Collector>::from_raw(long_to_raw_ptr(collector)) };
+) -> jlong {
+    let collector = unsafe { Box::<Collector>::from_raw(long_to_raw_ptr(collector)) };
 
-    let len = env.get_array_length(bytes).unwrap();
-    let primitive = env.get_primitive_array_critical(bytes, ReleaseMode::CopyBack).unwrap();
+    let len = env.get_array_length(&bytes).unwrap();
+    let primitive = unsafe {
+        env.get_array_elements_critical(&bytes, ReleaseMode::CopyBack).unwrap()
+    };
     let data = unsafe { &*slice_from_raw_parts(primitive.as_ptr() as *const u8, len as usize) };
 
     if let Ok(bitmap) = lodepng::decode32(&data) {
-        let image: Img<Cow<[RGBA8]>> = Img::new(bitmap.buffer.into(), bitmap.width, bitmap.height);
-        collector.add_frame_rgba_cow(frame_index as usize, image, presentation).unwrap();
+        let image: ImgVec<RGBA8> = Img::new(bitmap.buffer.into(), bitmap.width, bitmap.height);
+        collector.add_frame_rgba(frame_index as usize, image, presentation).unwrap();
     }
 
     let raw = Box::into_raw(collector);
@@ -63,20 +67,20 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_CollectorKt_nCollectorAddFr
 
 #[no_mangle]
 pub extern "system" fn Java_org_laolittle_plugin_gif_CollectorKt_nCollectorAddPngFile(
-    env: JNIEnv,
+    mut env: JNIEnv,
     _class: JClass,
-    path: jstring,
+    path: JString,
     frame_index: jint,
     presentation: jdouble,
     collector: jlong,
-) -> i64 {
-    let mut collector = unsafe { Box::<Collector>::from_raw(long_to_raw_ptr(collector)) };
-    let str = env.get_string(path.into()).unwrap();
+) -> jlong {
+    let collector = unsafe { Box::<Collector>::from_raw(long_to_raw_ptr(collector)) };
+    let str = env.get_string(&path).unwrap();
     let path = str.to_str().unwrap();
 
     if let Ok(bitmap) = lodepng::decode32_file(path) {
-        let image: Img<Cow<[RGBA8]>> = Img::new(bitmap.buffer.into(), bitmap.width, bitmap.height);
-        collector.add_frame_rgba_cow(frame_index as usize, image, presentation).unwrap();
+        let image: ImgVec<RGBA8> = ImgVec::new(bitmap.buffer.into(), bitmap.width, bitmap.height);
+        collector.add_frame_rgba(frame_index as usize, image, presentation).unwrap();
     }
 
     let raw = Box::into_raw(collector);
@@ -94,13 +98,13 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_CollectorKt_nCloseCollector
 
 #[no_mangle]
 pub extern "system" fn Java_org_laolittle_plugin_gif_WriterKt_nWriteToFile(
-    env: JNIEnv,
+    mut env: JNIEnv,
     _class: JClass,
-    path: jstring,
+    path: JString,
     writer: jlong,
 ) {
     let writer = unsafe { Box::<Writer>::from_raw(long_to_raw_ptr(writer)) };
-    let str = env.get_string(path.into()).unwrap();
+    let str = env.get_string(&path).unwrap();
     let path = str.to_str().unwrap();
     let f = File::create(path).unwrap();
 
@@ -120,7 +124,7 @@ pub extern "system" fn Java_org_laolittle_plugin_gif_WriterKt_nWriteToBytes(
     let mut nop = NoProgress {};
     writer.write(&mut buff, &mut nop).unwrap();
 
-    env.byte_array_from_slice(&buff).unwrap()
+    **env.byte_array_from_slice(&buff).unwrap()
 }
 
 fn raw_ptr_to_long<T>(ptr: *const T) -> i64 {
