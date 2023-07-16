@@ -10,12 +10,11 @@ suspend fun main() {
 
     System.load(libFile.absolutePath)
 
-    val encoder = GifEncoder.new(GifSetting(
-        112, 112, 100, true, GifSetting.Repeat.Infinite
-    ))
-
-    encoder.writer
-    encoder.collector
+    val encoder = GifEncoder.new(
+        GifSetting(
+            112, 112, 100, true, GifSetting.Repeat.Infinite
+        )
+    )
 
     measureTimeMillis {
         val (collector, writer) = encoder
@@ -23,6 +22,6 @@ suspend fun main() {
         collector.addFrame(File("img0.png").readBytes(), 0, 0.0)
         collector.addFrame(File("img1.png").readBytes(), 1, 1.0)
         collector.close()
-        if (writer.canWrite) writer.writeToBytes().also { File("f.gif").writeBytes(it) }
+        writer.writeToBytes().also { File("f.gif").writeBytes(it) }
     }.also(::println)
 }

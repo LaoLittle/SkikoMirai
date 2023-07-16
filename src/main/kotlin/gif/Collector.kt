@@ -3,7 +3,7 @@ package org.laolittle.plugin.gif
 /**
  * 图片收集器
  */
-public class Collector internal constructor(_ptr: RawPointer) : GifNative(_ptr) {
+public class Collector internal constructor(ptr: RawPointer) : GifNative(ptr) {
     public fun addFrame(bytes: ByteArray, frameIndex: Int, presentation: Double) {
         if (dropped) error("Already closed")
         ptr = nCollectorAddFrameBytes(bytes, frameIndex, presentation, ptr)
@@ -21,10 +21,6 @@ public class Collector internal constructor(_ptr: RawPointer) : GifNative(_ptr) 
         if (dropped) error("Already closed")
         nCloseCollector(ptr)
         dropped = true
-    }
-
-    init {
-        GifLibrary.load()
     }
 }
 

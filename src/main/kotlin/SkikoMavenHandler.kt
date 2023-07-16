@@ -1,8 +1,10 @@
 package org.laolittle.plugin
 
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import org.jetbrains.skiko.hostId
 import java.io.InputStream
@@ -13,12 +15,12 @@ public suspend fun latestVersion(): Version {
 
     val client = HttpClient(OkHttp)
     val regex = Regex("""<a(.*?)>(.*?)/(</a>)""")
-    val html: String = client.get("$JetBrainsSkikoMaven/$repository") {
+    val html = client.get("$JetBrainsSkikoMaven/$repository") {
         userAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36 Edg/102.0.1245.33")
         headers {
             set("HttpHeaders.Authorization", "maven.pkg.jetbrains.space")
         }
-    }
+    }.bodyAsText()
 
     val matches = regex.findAll(html)
     matches.forEach {
@@ -34,16 +36,16 @@ public suspend fun latestVersion(): Version {
 public suspend fun getSkiko(version: Version): InputStream {
     val client = HttpClient(OkHttp)
 
-    return client.get("https://maven.pkg.jetbrains.space/public/p/compose/dev/org/jetbrains/skiko/$repository/$version/$repository-$version.jar")
+    return client
+        .get("https://maven.pkg.jetbrains.space/public/p/compose/dev/org/jetbrains/skiko/$repository/$version/$repository-$version.jar")
+        .body()
 }
 
 public val repository: String by lazy { "skiko-awt-runtime-$hostId" }
 
 public class Version(public vararg val sub: Byte) : Comparable<Version> {
     override operator fun compareTo(other: Version): Int {
-        val times = maxOf(sub.size, other.sub.size)
-
-        repeat(times) { i ->
+        repeat(maxOf(sub.size, other.sub.size)) { i ->
             val tsub = sub.getOrNull(i) ?: return -1
             val osub = other.sub.getOrNull(i) ?: return 1
 
@@ -72,7 +74,7 @@ public class Version(public vararg val sub: Byte) : Comparable<Version> {
     }
 
     override fun hashCode(): Int {
-        return super.hashCode()
+        return sub.hashCode()
     }
 
     public companion object {

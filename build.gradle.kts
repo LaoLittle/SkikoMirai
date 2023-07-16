@@ -1,16 +1,16 @@
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
-    val kotlinVersion = "1.7.0"
+    val kotlinVersion = "1.9.0"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.12.0"
+    id("net.mamoe.mirai-console") version "2.14.0"
     `maven-publish`
 }
 
 group = "org.laolittle.plugin"
-version = "1.1.3"
+version = "1.2.0"
 
 kotlin {
     explicitApi = ExplicitApiMode.Strict
@@ -19,7 +19,7 @@ kotlin {
 repositories {
     maven("https://maven.aliyun.com/repository/central")
     mavenCentral()
-    //maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 publishing {
@@ -33,13 +33,13 @@ publishing {
 }
 
 dependencies {
-    val skikoVersion = "0.7.20"
+    val skikoVersion = "0.7.68"
     api("org.jetbrains.skiko:skiko-awt:$skikoVersion") {
         exclude("org.jetbrains.kotlin")
         exclude("org.jetbrains.kotlinx")
     }
 
-    val ktorVersion = "1.6.7"
+    val ktorVersion = "2.3.2"
     implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
 

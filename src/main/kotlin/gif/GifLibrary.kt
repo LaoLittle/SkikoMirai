@@ -8,9 +8,18 @@ public object GifLibrary {
 
     private val defaultGifLibrary = DefaultNativeLibFolder.resolve(System.mapLibraryName("gifski"))
 
+    public var gifSupported: Boolean = true
+        private set
+
     @Synchronized
     public fun load() {
+        if (!gifSupported) return
+
         if (loaded.compareAndSet(false, true))
-            System.load(defaultGifLibrary.absolutePath)
+            runCatching {
+                System.load(defaultGifLibrary.absolutePath)
+            }.onFailure {
+                gifSupported = false
+            }.getOrThrow()
     }
 }

@@ -7,18 +7,20 @@ internal typealias RawPointerArray = LongArray
 
 internal val nativeNullPtr: RawPointer get() = 0L
 
-public open class GifNative internal constructor(_ptr: RawPointer) : Closeable {
+private val className = GifNative::class.simpleName ?: "<GifNative>"
+
+public open class GifNative internal constructor(ptr: RawPointer) : Closeable {
     public var dropped: Boolean = false
         protected set
 
-    public var ptr: RawPointer = _ptr
+    public var ptr: RawPointer = ptr
         protected set
 
     override fun close(): Unit = throw IllegalStateException("Managed by native")
 
     override fun equals(other: Any?): Boolean {
         if (other !is GifNative) return false
-        return this.ptr == other.ptr
+        return ptr == other.ptr
     }
 
     override fun hashCode(): Int {
@@ -28,11 +30,10 @@ public open class GifNative internal constructor(_ptr: RawPointer) : Closeable {
     }
 
     override fun toString(): String {
-        return "${this::class.simpleName ?: "<GifNative>"}(ptr=$ptr)"
+        return "$className(ptr=$ptr)"
     }
 
     init {
-        GifLibrary.load()
-        require(_ptr != nativeNullPtr) { "Can't wrap nullptr, which is supposed to use by ${this::class.simpleName}" }
+        require(ptr != nativeNullPtr) { "Can't wrap nullptr, which is supposed to use by $className" }
     }
 }

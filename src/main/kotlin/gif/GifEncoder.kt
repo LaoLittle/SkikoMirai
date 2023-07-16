@@ -14,10 +14,6 @@ public class GifEncoder private constructor(ptr: RawPointerArray) {
     public companion object {
         public fun new(setting: GifSetting): GifEncoder =
             GifEncoder(nNewEncoder(setting.width, setting.height, setting.quality, setting.fast, setting.repeat.times))
-
-        init {
-            GifLibrary.load()
-        }
     }
 }
 
@@ -27,4 +23,4 @@ private external fun nNewEncoder(
     quality: Byte,
     fast: Boolean,
     repeat: Short
-): LongArray
+): RawPointerArray

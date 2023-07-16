@@ -8,7 +8,7 @@ public class GifSetting public constructor(
     public val repeat: Repeat
 ) {
     public sealed class Repeat private constructor(public val times: Short) {
-        public object Infinite : Repeat(-1)
+        public data object Infinite : Repeat(-1)
 
         public class Finite(times: Short) : Repeat(times)
     }
