@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "org.laolittle.plugin"
-version = "1.2.0"
+version = "1.2.1"
 
 kotlin {
     explicitApi = ExplicitApiMode.Strict
@@ -19,7 +19,7 @@ kotlin {
 repositories {
     maven("https://maven.aliyun.com/repository/central")
     mavenCentral()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    //maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 publishing {
@@ -33,7 +33,7 @@ publishing {
 }
 
 dependencies {
-    val skikoVersion = "0.7.68"
+    val skikoVersion = "0.7.67"
     api("org.jetbrains.skiko:skiko-awt:$skikoVersion") {
         exclude("org.jetbrains.kotlin")
         exclude("org.jetbrains.kotlinx")
